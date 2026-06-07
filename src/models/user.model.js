@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import bcrypt from "bcrypt"
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 
 const userSchema = new Schema(
@@ -53,17 +53,23 @@ const userSchema = new Schema(
     }
 )
 
-// Run before saving user document
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function () {
 
-    // If password wasn't changed, skip hashing
-    if (!this.isModified("password")) return next()
+    // Run password hashing only when password is modified.
+    // This prevents hashing the already-hashed password
+    // every time the user document is updated.
+    if (!this.isModified("password")) {
+        return next();
+    }
 
-    // Convert plain password into hashed password
-    this.password = await bcrypt.hash(this.password, 10)
+    // Convert plain text password into a secure hashed password.
+    // 10 = salt rounds (cost factor).
+    this.password = await bcrypt.hash(this.password, 10);
 
-    next()
-})
+    // Tell Mongoose that middleware work is complete
+    // and continue with the save operation.
+    
+});
 
 // Compare entered password with hashed password stored in DB
 userSchema.methods.isPasswordCorrect = async function(password) {
