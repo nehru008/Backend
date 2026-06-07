@@ -1,11 +1,23 @@
-import express from "express" 
+
 import Mongoose  from "mongoose"
-import dotenv from "dotenv"
-dotenv.config({
-    path:'./env'
-})
 import connectDB from "../src/db/index.js";
+
+import dotenv from "dotenv"
+dotenv.config({path:'./env'})
+
+const PORT = process.env.PORT || 8000 
+
 connectDB()
+.then(()=>{
+    app.listen(PORT,()=>{
+        console.log(`Server connected on port:${PORT}`)
+
+    })
+
+}).catch((err)=>{
+    console.log("Mongodb not connected",err)
+
+})
 
 
 
