@@ -59,7 +59,7 @@ userSchema.pre("save", async function () {
     // This prevents hashing the already-hashed password
     // every time the user document is updated.
     if (!this.isModified("password")) {
-        return next();
+        return ;
     }
 
     // Convert plain text password into a secure hashed password.
